@@ -988,7 +988,13 @@ public class DocumentResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
+
         if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        if(!ConfigUtil.getConfigBooleanValue(ConfigType.DOCUMENT_DELETION)) // check if delete is enabled
+        {
             throw new ForbiddenClientException();
         }
 

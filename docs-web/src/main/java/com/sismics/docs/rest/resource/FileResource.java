@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.AclDao;
 import com.sismics.docs.core.dao.DocumentDao;
 import com.sismics.docs.core.dao.FileDao;
@@ -15,6 +16,7 @@ import com.sismics.docs.core.event.FileUpdatedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.*;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.FileUtil;
@@ -523,12 +525,20 @@ public class FileResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
+
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
 
         // Get the file
         File file = findFile(id, null);
+
+        if(!ConfigUtil.getConfigBooleanValue(ConfigType.DOCUMENT_DELETION)) { // check if delete is enabled
+            if(file.getDocumentId() != null) // delete is forbidden if file is attached to a document
+            {
+                throw new ForbiddenClientException();
+            }
+        }
 
         // Delete the file
         FileDao fileDao = new FileDao();

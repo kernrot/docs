@@ -21,6 +21,11 @@ public enum ConfigType {
     GUEST_LOGIN,
 
     /**
+     * Document deletion.
+     */
+    DOCUMENT_DELETION,
+
+    /**
      * Default language.
      */
     DEFAULT_LANGUAGE,

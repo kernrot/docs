@@ -21,6 +21,15 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
     });
   };
 
+  // Enable/disable document deletion
+  $scope.changeDocumentDeletion = function (enabled) {
+    Restangular.one('app').post('document_deletion', {
+      enabled: enabled
+    }).then(function () {
+      $scope.app.document_deletion = enabled;
+    });
+  };
+
   // Fetch the current theme configuration
   Restangular.one('theme').get().then(function (data) {
     $scope.theme = data;

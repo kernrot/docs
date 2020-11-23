@@ -67,6 +67,7 @@ public class AppResource extends BaseResource {
      * @apiSuccess {String} current_version API current version
      * @apiSuccess {String} min_version API minimum version
      * @apiSuccess {Boolean} guest_login True if guest login is enabled
+     * @apiSuccess {Boolean} document_deletion True if documents can be deleted
      * @apiSuccess {String} default_language Default platform language
      * @apiSuccess {Number} queued_tasks Number of queued tasks waiting to be processed
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
@@ -86,6 +87,7 @@ public class AppResource extends BaseResource {
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
         Boolean guestLogin = ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN);
+        Boolean documentDeletion = ConfigUtil.getConfigBooleanValue(ConfigType.DOCUMENT_DELETION);
         String defaultLanguage = ConfigUtil.getConfigStringValue(ConfigType.DEFAULT_LANGUAGE);
         UserDao userDao = new UserDao();
         DocumentDao documentDao = new DocumentDao();
@@ -99,6 +101,7 @@ public class AppResource extends BaseResource {
                 .add("current_version", currentVersion.replace("-SNAPSHOT", ""))
                 .add("min_version", minVersion)
                 .add("guest_login", guestLogin)
+                .add("document_deletion", documentDeletion)
                 .add("default_language", defaultLanguage)
                 .add("queued_tasks", AppContext.getInstance().getQueuedTaskCount())
                 .add("total_memory", Runtime.getRuntime().totalMemory())
@@ -137,6 +140,34 @@ public class AppResource extends BaseResource {
 
         ConfigDao configDao = new ConfigDao();
         configDao.update(ConfigType.GUEST_LOGIN, enabled.toString());
+
+        return Response.ok().build();
+    }
+
+    /**
+     * Enable/disable document deletion.
+     *
+     * @api {post} /app/document_deletion Enable/disable document deletion
+     * @apiName PostAppGuestLogin
+     * @apiGroup App
+     * @apiParam {Boolean} enabled If true, enable document deletion
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param enabled If true, enable document deletion
+     * @return Response
+     */
+    @POST
+    @Path("document_deletion")
+    public Response documentDeletion(@FormParam("enabled") Boolean enabled) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        configDao.update(ConfigType.DOCUMENT_DELETION, enabled.toString());
 
         return Response.ok().build();
     }

@@ -11,6 +11,19 @@
   <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">{{ 'settings.config.disable_guest_access' | translate }}</button>
 </div>
 
+<h2>
+  <span translate="settings.config.title_document_deletion"></span>
+  <span class="label" ng-class="{ 'label-success': app.document_deletion, 'label-danger': !app.document_deletion }">
+    {{ app.document_deletion ? 'enabled' : 'disabled' | translate }}
+  </span>
+</h2>
+<p translate="settings.config.message_document_deletion" translate-values="{ appName: appName }">
+</p>
+<div ng-if="app">
+  <button ng-if="!app.document_deletion" class="btn btn-primary" ng-click="changeDocumentDeletion(true)">{{ 'settings.config.enable_document_deletion' | translate }}</button>
+  <button ng-if="app.document_deletion" class="btn btn-danger" ng-click="changeDocumentDeletion(false)">{{ 'settings.config.disable_document_deletion' | translate }}</button>
+</div>
+
 <h2 translate="settings.config.title_general"></h2>
 <form class="form-horizontal" name="generalForm" novalidate>
   <div class="form-group" ng-class="{ 'has-error': !generalForm.defaultLanguage.$valid && generalForm.$dirty }">
