@@ -10,13 +10,14 @@
   <p class="text-center" ng-show="error.status == 403">
     <span class="fas fa-exclamation-triangle"></span>
     {{ 'document.view.forbidden' | translate }}
+
   </p>
 </div>
 
 <div ng-show="document">
   <div class="pull-right btn-group">
-    <button class="btn btn-danger" ng-show="document.writable" ng-click="deleteDocument(document)"><span class="fas fa-trash"></span> {{ 'delete' | translate }}</button>
-    <a href="#/document/edit/{{ document.id }}" ng-show="document.writable" class="btn btn-primary"><span class="fas fa-pencil-alt"></span> {{ 'edit' | translate }}</a>
+    <button class="btn btn-danger" ng-show="{{ app.document_deletion ? 'document.writable' : 'false' }}" ng-click="deleteDocument(document)"><span class="fas fa-trash"></span> {{ app.document_deletion ? 'delete' : '?' | translate }} </button>
+    <a href="#/document/edit/{{ document.id }}" ng-show="document.writable" class="btn btn-primary" style="{{ app.document_deletion ? '' : 'border-radius: 4px;' }}"><span class="fas fa-pencil-alt"></span> {{ 'edit' | translate }}</a>
   </div>
 
   <div class="pull-right dropdown" uib-dropdown>
